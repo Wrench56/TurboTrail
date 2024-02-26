@@ -40,12 +40,13 @@
 
 <style>
     .console {
-        background-color: rgba(40, 44, 52, 1);
+        background-color: rgba(30, 34, 42, 0.62);
         border-radius: 12px;
         width: 92%;
         height: 85%;
         margin: 16px;
         padding: 30px 30px 36px 36px;
+        overflow: hidden;
     }
 
     /* Fix this */
@@ -53,7 +54,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 97vh;
+        height: 88vh;
     }
 
     .center-horiz {

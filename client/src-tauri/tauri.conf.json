@@ -4,7 +4,8 @@
     "beforeBuildCommand": "yarn build",
     "beforeDevCommand": "yarn dev",
     "devPath": "http://localhost:8080",
-    "distDir": "../build"
+    "distDir": "../build",
+    "withGlobalTauri": true
   },
   "package": {
     "productName": "TurboTrace",
@@ -12,7 +13,11 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "all": true,
+      "window": {
+        "all": true,
+        "create": false
+      }
     },
     "bundle": {
       "active": true,
@@ -53,13 +58,16 @@
     "updater": {
       "active": false
     },
+    "macOSPrivateApi": true,
     "windows": [
       {
         "fullscreen": false,
         "height": 600,
         "resizable": true,
         "title": "TurboTrace",
-        "width": 800
+        "width": 800,
+        "transparent": true,
+        "decorations": false
       }
     ]
   }
