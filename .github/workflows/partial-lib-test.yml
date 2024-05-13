@@ -1,0 +1,33 @@
+name: Gradle Check
+on:
+  pull_request:
+    branches:
+      - test
+
+jobs:
+  gradle_check:
+    name: Gradle Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: temurin
+
+      - name: Grant Permissions to gradlew
+        working-directory: ./lib
+        run: chmod +x gradlew
+
+      - name: Toolchain info
+        working-directory: ./lib
+        run: |
+          java -version
+          ./gradlew -version
+
+      - name: Gradle Check
+        working-directory: ./lib
+        run: ./gradlew check --no-daemon
