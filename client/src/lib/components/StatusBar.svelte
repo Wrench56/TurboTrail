@@ -4,12 +4,20 @@
 
   import LogStore from "$lib/stores/LogStore";
 
-  import type { Event } from "$lib/types/event.types";
-  import type { NetStatus, SysStatus } from "$lib/types/status.types";
-  import { TextAlign, type ConsolePrint } from "$lib/types/console_tab.types";
+  import {
+    type BytesRecv,
+    type NetStatus,
+    type SysStatus,
+  } from "$lib/types/status.types";
+  import { TextAlign } from "$lib/types/console_tab.types";
+  import VolumeStore from "$lib/stores/VolumeStore";
 
   let current_net_status: NetStatus = {
     connected: false,
+  };
+
+  let current_bytes_recv: BytesRecv = {
+    raw_bytes: 0,
   };
 
   let current_sys_status: SysStatus = {
@@ -17,12 +25,19 @@
     cpu_usage: 0.0,
   };
 
+  let volume = 0;
+  $: volume = $VolumeStore;
+
   onMount(async () => {
-    await listen("sys_stat", (event: Event<SysStatus>) => {
+    await listen<SysStatus>("sys_stat", (event) => {
       current_sys_status = event.payload;
     });
 
-    await listen("net_stat", (event: Event<NetStatus>) => {
+    await listen<BytesRecv>("raw_bytes", (event) => {
+      current_bytes_recv = event.payload;
+    });
+
+    await listen<NetStatus>("net_stat", (event) => {
       current_net_status = event.payload;
       if (current_net_status.connected) {
         LogStore.update((items) => {
@@ -62,6 +77,11 @@
       Mem: {Math.round(current_sys_status.mem_usage * 100) / 100}% &nbsp; |
       &nbsp; CPU: {Math.round(current_sys_status.cpu_usage * 100) / 100}%
     </p>
+    <p class="data">
+      Recv: {current_bytes_recv.raw_bytes} bytes | Data: {volume} bytes [{Math.round(
+        (1 - (current_bytes_recv.raw_bytes / (volume == 0 ? 1 : volume))) * 100
+      )}%]
+    </p>
   </div>
 </div>
 
@@ -71,7 +91,7 @@
     margin: 0px 20px 2px 20px;
     font-size: small;
     font-weight: bold;
-    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif, monospace;
   }
 
   .container {

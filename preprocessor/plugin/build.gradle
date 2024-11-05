@@ -1,7 +1,12 @@
 plugins {
     id 'java-gradle-plugin'
     id 'com.adarshr.test-logger' version '4.0.0'
+    id 'com.gradle.plugin-publish' version '1.2.1'
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
+
+group = "io.github.wrench56"
+version = "1.1.0"
 
 /* Configure test logger */
 testlogger {
@@ -27,9 +32,14 @@ dependencies {
 }
 
 gradlePlugin {
+    website = 'https://github.com/Wrench56/TurboTrace' 
+    vcsUrl = 'https://github.com/Wrench56/TurboTrace'
     plugins {
         preprocess {
             id = 'io.github.wrench56.turbotrace-preprocessor'
+            displayName = 'TurboTrace'
+            description = 'TurboTrace log library Gradle preprocessor plugin'
+            tags.set(['TurboTrace', 'logging', 'preprocessor'])
             implementationClass = 'io.github.wrench56.turbotrace_preprocessor.PreprocessorPlugin'
         }
     }
@@ -68,4 +78,16 @@ tasks.withType(JavaCompile) {
 tasks.named('test') {
     /* Use JUnit Jupiter for unit tests. */
     useJUnitPlatform()
+}
+
+tasks.named('shadowJar') {
+    archiveClassifier.set("")
+}
+
+tasks.named('jar').configure {
+    enabled = false
+}
+
+tasks.build {
+    dependsOn tasks.shadowJar
 }
